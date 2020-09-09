@@ -4,31 +4,48 @@
 
 #include "Checksum.h"
 #include "pakcets.h"
+#include "SockFun.h"
+
+
 
 
 
 int main(int argc, char** argv)
 {
+	initWinSock();
+
 	// Create ICMP socket
 	SOCKET icmpSock = INVALID_SOCKET;
-	icmpSock = socket(AF_INET, SOCK_RAW, IPPROTO_ICMP);
+	createSock(&icmpSock);
 
-	int sockResult;
 
-	if (icmpSock == INVALID_SOCKET)
-	{
-		printf("Unable to create a raw socket: error %d\n", WSAGetLastError());
+	u_char send_buff[MAX_ICMP_SIZE];
+	ICMPHeader *icmp = (ICMPHeader *)send_buff;
+	icmp->type = ICMP_ECHO_REQUEST;
+	icmp->code = 0;
+	icmp->id = GetCurrentProcessId();
+	icmp->seq = 1;
+	icmp->checksum = 0;
 
-		//Attempt to close socket
-		sockResult = closesocket(icmpSock);
+	int packet_size = sizeof(ICMPHeader);
+	
+	icmp->checksum = ip_checksum((u_short *)send_buff, packet_size);
 
-		if (sockResult == SOCKET_ERROR)
-		{
-			printf("closesocket failed with error = %d\n", WSAGetLastError());
-			WSACleanup();
-		}
+	char ttl = 8;
+
 		
-		exit(-1);
-	}
+	setTTL(&icmpSock, ttl);
+
+	sockaddr_in RecvAddr; 
+	RecvAddr.sin_family = AF_INET;
+	RecvAddr.sin_port = htons(27015);
+	RecvAddr.sin_addr.s_addr = inet_addr("98.137.11.163");
+
+	sendICMP(&icmpSock, send_buff, RecvAddr);
+	
+
+	WSACleanup();
+
+
 	return 0;
 }

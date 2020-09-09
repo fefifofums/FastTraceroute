@@ -4,7 +4,7 @@
 
 #include "Checksum.h"
 
-u_short Checksum::ip_checksum(u_short *buffer, int size)
+u_short ip_checksum(u_short *buffer, int size)
 {
 	u_long  cksum = 0;
 

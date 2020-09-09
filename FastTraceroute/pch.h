@@ -6,6 +6,6 @@
 #include <winsock2.h>
 #include <tchar.h>
 #include <Windows.h>
-//#include <WS2tcpip.h>
+#include <WS2tcpip.h>
 
 #endif //PCH_H

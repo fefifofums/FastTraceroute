@@ -2,6 +2,7 @@
 #pragma comment(lib, "Ws2_32.lib")
 
 #include "pch.h"
+#include "Checksum.h"
 
 #define IP_HDR_SIZE 20		//  RFC 791 
 #define ICMP_HDR_SIZE 8		//  RFC 792 
@@ -26,6 +27,7 @@
 /* remember the current packing state */
 #pragma pack (push)
 #pragma pack (1)
+
 
 /* define the IP header (20 bytes) */
 class IPHeader {
